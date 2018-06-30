@@ -1,7 +1,7 @@
 #! /bin/bash
 ########################################################################################
 #Based on DSpace 6.x Documentation
-#Written by bankashi
+#Written by bankashi - Team Ridda2
 #Version: 2.0 RC
 #Note: Use dos2unix - format DOS/Windows newline (CRLF) to Unix newline (\n)
 #License:   
@@ -11,7 +11,7 @@
 ########################################################################################
 if [ $EUID -ne 0 ]
 then
-echo "!This script must be run as root¡"  
+echo "This script must be run as root¡"  
 else
 while true
 do
@@ -37,7 +37,7 @@ do
 cat > $DSCONF << "EOF"
 # Automatically generated file; DO NOT EDIT / DO NOT DELETE.
 DSPACE_PATH=/
-DSPACE_URL=https://github.com/DSpace/DSpace/releases/download/dspace-6.2/dspace-6.2-src-release.tar.gz
+DSPACE_URL=https://github.com/DSpace/DSpace/releases/download/dspace-6.3/dspace-6.3-src-release.tar.gz
 PSQL_SOU=/etc/postgresql/9.5/main
 DSPACE_US=/home/dspace/.bashrc
 JAVA_TCNANA=/etc/default/tomcat7
@@ -436,10 +436,6 @@ PM_Misc_uB(){
 	chmod -R 775 $DSPACE_PATH/dspace/var/oai/
  	chmod -R 775 $DSPACE_PATH/dspace/log/
 }
-PM_Misc_C(){
-	echo "Create an initial administrator account!"
-	/dspace/bin/dspace create-administrator
-}
 ########################## Module B ##########################
 PM_Tomcat(){
 	source $DSCONF
@@ -624,7 +620,6 @@ export -f PM_RestoreDB
 export -f PM_Misc_A
 export -f PM_Misc_B
 export -f PM_Misc_uB
-export -f PM_Misc_C
 #B
 export -f PM_Tomcat
 export -f PM_Apache
@@ -736,9 +731,7 @@ case $RULE in
 				PM_Misc_B
 				#Module B
 				PM_Tomcat && PM_Apache
-				#Admin
 				PM_Misc_uB
-				su dspace -c "bash -c PM_Misc_C"
 			else
 				PM_Prerequisites
 				echo "Creating the user...."
@@ -752,9 +745,7 @@ case $RULE in
 				PM_Misc_B
 				#Module B
 				PM_Tomcat && PM_Apache
-				#Admin
 				PM_Misc_uB
-				su dspace -c "bash -c PM_Misc_C"
 			fi
 		else
 		if [ "$VOpts" = "n" ] || [ "$VOpts" = "N" ]

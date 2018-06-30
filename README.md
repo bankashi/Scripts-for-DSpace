@@ -1,6 +1,4 @@
 # DSpace Replication, Upgrade & Install Automatic Tasks Suite
-
-
 This project represents a collection of files and scripts be code files (having a .sh extension). For example, crontab scripts, Dublin Core Application Profile Guidelines or customize XML files. 
 This will help you how to create a repository [DSpace](https://github.com/DSpace/DSpace) and how to replicate or upgrade core dspace, aspects and themes for Manakin (dspace-xmlui), and other webservice/applications without complicated Technical documentation.
 
@@ -22,61 +20,95 @@ now, run the script. This script has three options (1. Replication, 2. Upgrade &
 $ . ./DSpace-RUI.sh
 ```
 
+# Documentation
+This script is based on the [DSpace 6.x Documentation](https://wiki.duraspace.org/display/DSDOC6x/DSpace+6.x+Documentation)
+
+# General Information
+- Written: bankashi
+- Version: 2.0 RC
+
 # Miscellaneous
+**Note:** For example, the installation path is /opt
+
 ## Scheduled Tasks via Cron (crontab)
+>[While every DSpace installation is unique, in order to get the most out of DSpace, we highly recommend enabling these basic cron settings](https://wiki.duraspace.org/display/DSDOC6x/Scheduled+Tasks+via+Cron)
 ### Root user
 ```sh
-1 0 * * * chmod -R 775 /dspace/log/ > /dev/null
-2 0 * * * chmod -R 775 /dspace/var/oai/ > /dev/null
-0 3 * * * chmod -R 775 /dspace/var/oai/ > /dev/null
+1 0 * * * chmod -R 775 /opt/dspace/log/ > /dev/null
+2 0 * * * chmod -R 775 /opt/dspace/var/oai/ > /dev/null
+0 3 * * * chmod -R 775 /opt/dspace/var/oai/ > /dev/null
 ```
 ### Dspace user
 ```sh
-3 0 * * * /dspace/bin/dspace oai import -c > /dev/null
-3 0 * * * /dspace/bin/dspace oai import -c > /dev/null
-0 3 * * * /dspace/bin/dspace filter-media
-0 4 * * * /dspace/bin/dspace curate -q admin_ui
-0 0,8,16 * * * /dspace/bin/dspace generate-sitemaps > /dev/null
-0 6 * * * /dspace/bin/dspace sub-daily
-0 3 * * 0 /dspace/bin/dspace checker -l -p
-0 6 * * 0 /dspace/bin/dspace checker-emaile
-0 1 1 * * /dspace/bin/dspace cleanup > /dev/null
+3 0 * * * /opt/dspace/bin/dspace oai import -c > /dev/null
+10 0 * * * /opt/dspace/bin/dspace index-discovery > /dev/null
+0 3 * * * /opt/dspace/bin/dspace filter-media > /dev/null
+0 4 * * * /opt/dspace/bin/dspace curate -q admin_ui > /dev/null
+0 0,8,16 * * * /opt/dspace/bin/dspace generate-sitemaps > /dev/null
+0 6 * * * /opt/dspace/bin/dspace sub-daily > /dev/null
+0 3 * * 0 /opt/dspace/bin/dspace checker -l -p > /dev/null
+0 6 * * 0 /opt/dspace/bin/dspace checker-emailer > /dev/null
+0 1 1 * * /opt/dspace/bin/dspace cleanup > /dev/null
 ```
 
 ## Editing Route Source 
-**Note:** This repository was installed in the root
+**Note:** For example, the installation path is /opt
+
 ### page-structure.xsl
 ```sh
-$ nano /dspace-source/dspace-xmlui-mirage2/src/main/webapp/xsl/core/page-structure.xsl
+$ nano /opt/dspace-source/dspace-xmlui-mirage2/src/main/webapp/xsl/core/page-structure.xsl
 ```
 ### item-view.xsl
 ```sh
-$ nano /dspace-source/dspace-xmlui-mirage2/src/main/webapp/xsl/aspect/artifactbrowser/item-view.xsl
+$ nano /opt/dspace-source/dspace-xmlui-mirage2/src/main/webapp/xsl/aspect/artifactbrowser/item-view.xsl
 ```
 ### languages
+>[Recommended location for i18n customizations](https://wiki.duraspace.org/display/DSDOC6x/Localization+L10n)
 ```sh
-$ mkdir /dspace-source/dspace/modules/xmlui/src/main/webapp/i18n/
-$ nano/dspace-source/dspace/modules/xmlui/src/main/webapp/i18n/messages_en.xml
+$ mkdir /opt/dspace-source/dspace/modules/xmlui/src/main/webapp/i18n/
+$ nano /opt/dspace-source/dspace/modules/xmlui/src/main/webapp/i18n/messages_en.xml
 ```
-### static content
+### static contents
+>[Repository admins and developers will also benefit because of the tools available to make both simple and advanced customizations](https://wiki.duraspace.org/display/DSDOC6x/Mirage+2+Configuration+and+Customization)
 ```sh
-$ mkdir /dspace-source/dspace/modules/xmlui/src/main/webapp/static/
-$ mkdir /dspace-source/dspace/modules/xmlui/src/main/webapp/static/mycontent/
-$ nano /dspace-source/dspace/modules/xmlui/src/main/webapp/static/mycontent/mystyle.css
+$ mkdir /opt/dspace-source/dspace/modules/xmlui/src/main/webapp/static/
+$ mkdir /opt/dspace-source/dspace/modules/xmlui/src/main/webapp/static/mycontent/
+$ nano /opt/dspace-source/dspace/modules/xmlui/src/main/webapp/static/mycontent/mystyle.css
 ```
 
 ### input-forms.xml
 ```sh
-$ nano /dspace-source/dspace/config/input-forms.xml
+$ nano /opt/dspace-source/dspace/config/input-forms.xml
 ```
 ### news-xmlui.xml
 ```sh
-$ nano /dspace-source/dspace/config/news-xmlui.xml
+$ nano /opt/dspace-source/dspace/config/news-xmlui.xml
 ```
 
-# Contribution guidelines
-- Written: bankashi
-- Version: 2.0 RC
+## Rebuild DSpace
+> dspace user
+```sh
+$ cd /opt/dspace-source
+$ mvn package -Dmirage2.on=true
+$ cd /opt/dspace-source/dspace/target/dspace-installer/
+$ ant update
+```
+> root user
+```sh
+$ service tomcat7 restart && service apache2 restart
+```
+
+## Create an initial administrator account
+```sh
+$ /opt/dspace/bin/dspace create-administrator
+```
+
+## Back Up
+**Note:** For example, a dspace user
+```sh
+$	sudo -u dspace pg_dump -U dspace -f mybackup.dump dspace -Fc
+$   tar -czvf dspace.tar.gz dspace
+```
 
 # License
-This Source Code Form is subject to the terms of the Mozilla PublicLicense, v. 2.0. 
+This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. 
