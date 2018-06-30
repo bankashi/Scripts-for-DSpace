@@ -11,7 +11,7 @@
 ########################################################################################
 if [ $EUID -ne 0 ]
 then
-echo "This script must be run as root¡"  
+echo "This script must be run as root!"  
 else
 while true
 do
@@ -246,8 +246,8 @@ PM_DSpace_C(){
 			then
 				echo "Setting the domain name..."
 				sed -i "s|REPO_MURL=localhost|REPO_MURL=${DwA}|g" $DSCONF
-				sed -i "s|dspace.hostname = localhost|dspace.hostname = ${REPO_MURL}|g" $DSPACE_PATH/dspace-source/dspace/config/dspace.cfg
-				sed -i "s|dspace.baseUrl = http://localhost:8080|dspace.baseUrl = http://${REPO_MURL}|g" $DSPACE_PATH/dspace-source/dspace/config/dspace.cfg
+				sed -i "s|dspace.hostname = localhost|dspace.hostname = ${DwA}|g" $DSPACE_PATH/dspace-source/dspace/config/dspace.cfg
+				sed -i "s|dspace.baseUrl = http://localhost:8080|dspace.baseUrl = http://${DwA}|g" $DSPACE_PATH/dspace-source/dspace/config/dspace.cfg
 				unset DwA && unset DwB
 				break
 			else
@@ -297,8 +297,8 @@ PM_DSpace_uC(){
 			then
 				echo "Setting the domain name..."
 				sed -i "s|REPO_MURL=localhost|REPO_MURL=${DwA}|g" $DSCONF
-				sed -i "s|dspace.hostname = localhost|dspace.hostname = ${REPO_MURL}|g" $DSPACE_PATH/dspace-source/dspace/config/dspace.cfg
-				sed -i "s|dspace.baseUrl = http://localhost:8080|dspace.baseUrl = http://${REPO_MURL}|g" $DSPACE_PATH/dspace-source/dspace/config/dspace.cfg
+				sed -i "s|dspace.hostname = localhost|dspace.hostname = ${DwA}|g" $DSPACE_PATH/dspace-source/dspace/config/dspace.cfg
+				sed -i "s|dspace.baseUrl = http://localhost:8080|dspace.baseUrl = http://${DwA}|g" $DSPACE_PATH/dspace-source/dspace/config/dspace.cfg
 				unset DwA && unset DwB
 				break
 			else
