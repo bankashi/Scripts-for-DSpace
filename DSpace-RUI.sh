@@ -2,12 +2,17 @@
 ########################################################################################
 #Based on DSpace 6.x Documentation
 #Written by bankashi - Team Ridda2
-#Version: 2.0 RC
+#Version: 2.5 RC
 #Note: Use dos2unix - format DOS/Windows newline (CRLF) to Unix newline (\n)
 #License:   
 #			This Source Code Form is subject to the terms of the Mozilla Public
 #			License, v. 2.0. If a copy of the MPL was not distributed with this
 #			file, You can obtain one at http://mozilla.org/MPL/2.0/.
+########################################################################################
+#LOG
+#Immediate Patch -> DS-4115 Mirage2- (https://jira.duraspace.org/browse/DS-4115)
+#Immeidate Patch -> DS-2458 Maven&Mirage2- (https://jira.duraspace.org/browse/DS-2458)
+#
 ########################################################################################
 if [ $EUID -ne 0 ]
 then
@@ -89,7 +94,7 @@ EOF
 done
 ########################## Module A ##########################
 PM_Prerequisites(){
-	apt-get install openjdk-8-jdk tomcat7 apache2 ant maven postgresql-9.5 git npm ufw -y
+	apt-get install openjdk-8-jdk tomcat7 apache2 ant maven postgresql-9.5 git ufw -y
 	ufw default deny incoming
 	ufw default allow outgoing
 	ufw allow 22
@@ -97,6 +102,20 @@ PM_Prerequisites(){
 	ufw allow 443
 	ufw allow 8080
 	ufw enable      
+}
+PM_Prerequisites_Mirage2(){
+	#NPM & Yarn
+	curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+	curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+	echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+	apt-get update -y
+	apt-get install git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev software-properties-common libffi-dev nodejs yarn -y  
+	#Ruby & Compass
+	apt install ruby-full ruby-compass -y
+	#Dependencies
+	gem install bundler
+	npm install -g grunt
+	npm install -g bower  
 }
 PM_DSpace_A(){
 	source $DSCONF
@@ -317,7 +336,7 @@ PM_DSpace_D(){
 	source $DSCONF
 	###
 	cd $DSPACE_PATH/dspace-source
-	mvn -U clean package -Dmirage2.on=true
+	mvn -U clean package -Dmirage2.on=true -Dmirage2.deps.included=false
 	cd $DSPACE_PATH/dspace-source/dspace/target/dspace-installer
 	ant update
 }
@@ -325,7 +344,7 @@ PM_DSpace_D_Inst(){
 	source $DSCONF
 	###
 	cd $DSPACE_PATH/dspace-source
-	mvn package -Dmirage2.on=true
+	mvn package -Dmirage2.on=true -Dmirage2.deps.included=false
 	cd $DSPACE_PATH/dspace-source/dspace/target/dspace-installer
 	ant fresh_install
 }
@@ -604,6 +623,7 @@ EOF
 ########################## Exports #########################
 #A
 export -f PM_Prerequisites
+export -f PM_Prerequisites_Mirage2
 export -f PM_DSpace_A
 export -f PM_DSpace_A_Inst
 export -f PM_DSpace_B
@@ -642,6 +662,7 @@ case $RULE in
 		if [ "$VOpts" = "y" ] || [ "$VOpts" = "Y" ]
 		then
 			PM_Prerequisites
+			PM_Prerequisites_Mirage2
 			###
 			if getent passwd | grep -c '^dspace:' > /dev/null 2>&1; then
     			#Module A
@@ -722,6 +743,7 @@ case $RULE in
 		then
 			if getent passwd | grep -c '^dspace:' > /dev/null 2>&1; then
 				PM_Prerequisites
+				PM_Prerequisites_Mirage2
 				#Module A
 				PM_DSpace_A_Inst
 				su postgres -c "bash -c PM_Postgres_A"
@@ -734,6 +756,7 @@ case $RULE in
 				PM_Misc_uB
 			else
 				PM_Prerequisites
+				PM_Prerequisites_Mirage2
 				echo "Creating the user...."
 				useradd -m dspace
 				#Module A
