@@ -646,8 +646,8 @@ export -f PM_Apache
 ############################################################################################
 RULE=$(whiptail --title "DSpace Replication, Upgrade & Install Automatic Tasks Suite" --menu "Make your option" 16 140 9 \
 	"1)" "Replicating / Migrating to a new server [Only Ubuntu Servers 16.04+]."   \
-	"2)" "Upgrading DSpace [Only Ubuntu Servers 16.04+]."  \
-	"3)" "Installing DSpace [Is under active development]."  \
+	"2)" "Upgrading DSpace (Mirage 2) [Only Ubuntu Servers 16.04+]."  \
+	"3)" "Installing DSpace (Mirage 2) [Only Ubuntu Servers 16.04+].."  \
 	"0)" "Exit"  3>&2 2>&1 1>&3	
 )
 ######
@@ -701,7 +701,7 @@ case $RULE in
 	####
 	"2)")
 		whiptail --scrolltext --title "Important Note" --msgbox "We cannot accept responsibility for any data loss or corruption before proceeding, do extensive testing on spare infrastructure. \nYou proceed at your own risk. \n \n Choose Ok to continue." 16 80 9
-		whiptail --scrolltext --title "Prerequisite Software" --msgbox "DSpace 6.x requires the following versions of prerequisite software: \n -Java 7 or 8 (Oracle or OpenJDK) \n -Apache Maven 3.0.5 or above \n -Apache Ant 1.8 or above \n -PostgreSQL 9.4 or above (with pgcrypto installed) \n -Tomcat 7 or above \n -node 6 or above \n -npm 3.10.8 or above \n \n Please note that the configuration and installation guidelines relating to a particular tool below are here for convenience. You should refer to the documentation for each individual component for complete and up-to-date details or contact your system administrator for more info. \n Also, Many of the tools are updated on a frequent basis, and the guidelines below may become out of date. \n \n Choose Ok to continue." 16 80 9   
+		whiptail --scrolltext --title "Prerequisite Software" --msgbox "DSpace 6.x requires the following versions of prerequisite software: \n -Java 7 or 8 (Oracle or OpenJDK) \n -Apache Maven 3.3.9 or above \n -Apache Ant 1.8 or above \n -PostgreSQL 9.4 or above (with pgcrypto installed) \n -Tomcat 7 or above \n -node 6 or above \n -npm 3.10.8 or above \n \n Please note that the configuration and installation guidelines relating to a particular tool below are here for convenience. You should refer to the documentation for each individual component for complete and up-to-date details or contact your system administrator for more info. \n Also, Many of the tools are updated on a frequent basis, and the guidelines below may become out of date. \n \n Choose Ok to continue." 16 80 9   
 		whiptail --scrolltext --title "Backup your DSpace" --msgbox "Make a complete backup of your system, including: \n -Database: Make a sdump of the database. For example: \n[ pg_dump -U dspace -f bk_dspace.dump dspace -Fc ] \n -DSpace: Backup the entire directory content of dspace. For example \n[ tar -czvf dspace.tar.gz /dspace ] \n -Customizations: If you have custom code, such as themes, modifications, or custom scripts, you will want to back them up to a safe location. \n \n It is strongly recommended that you create a backup of your DSpace instance. Also, backups are easy to recover from; a botched install/upgrade is very difficult if not impossible to recover from. \n \n Choose Ok to continue." 16 80 9
 		###
 		echo "Do you want to continue this operation?"
@@ -709,6 +709,7 @@ case $RULE in
 		if [ "$VOpts" = "y" ] || [ "$VOpts" = "Y" ]
 		then
 			if getent passwd | grep -c '^dspace:' > /dev/null 2>&1; then
+				PM_Prerequisites_Mirage2
 				PM_DSpace_A && PM_DSpace_B
 				service tomcat7 stop && PM_DSpace_uC
 	  			su dspace -c "bash -c PM_DSpace_D"
@@ -718,6 +719,7 @@ case $RULE in
 			else
 				echo "Creating the user...."
     			useradd -m dspace
+    			PM_Prerequisites_Mirage2
 				PM_DSpace_A && PM_DSpace_B
 				service tomcat7 stop && PM_DSpace_uC
 	  			su dspace -c "bash -c PM_DSpace_D"
