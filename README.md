@@ -25,72 +25,68 @@ This script is based on the [DSpace 6.x Documentation](https://wiki.duraspace.or
 
 # General Information
 - Written: bankashi
-- Version: 2.0 RC
+- Version: 2.5 RC
 
 # Miscellaneous
-**Note:** For example, the installation path is /opt
+**Note:** For example, the installation path is /
 
 ## Scheduled Tasks via Cron (crontab)
->[While every DSpace installation is unique, in order to get the most out of DSpace, we highly recommend enabling these basic cron settings](https://wiki.duraspace.org/display/DSDOC6x/Scheduled+Tasks+via+Cron)
+>[While every DSpace installation is unique, in order to get the most out of DSpace, we highly recommend enabling these basic cron settings](https://wiki.duraspace.org/display/DSDOC6x/Scheduled+Tasks+via+Cron), e.g: the two scripts inside the folder [ScheduledTasks].
+
+>**Prerequisite (root)**
+```sh
+$ mkdir /home/dspace/ScheduledTasks
+$ chown -R dspace:dspace /home/dspace/ScheduledTasks/
+```
 ### Root user
 ```sh
-1 0 * * * chmod -R 775 /opt/dspace/log/ > /dev/null
-2 0 * * * chmod -R 775 /opt/dspace/var/oai/ > /dev/null
-0 3 * * * chmod -R 775 /opt/dspace/var/oai/ > /dev/null
-```
-### Dspace user
-```sh
-3 0 * * * /opt/dspace/bin/dspace oai import -c > /dev/null
-10 0 * * * /opt/dspace/bin/dspace index-discovery > /dev/null
-0 3 * * * /opt/dspace/bin/dspace filter-media > /dev/null
-0 4 * * * /opt/dspace/bin/dspace curate -q admin_ui > /dev/null
-0 0,8,16 * * * /opt/dspace/bin/dspace generate-sitemaps > /dev/null
-0 6 * * * /opt/dspace/bin/dspace sub-daily > /dev/null
-0 3 * * 0 /opt/dspace/bin/dspace checker -l -p > /dev/null
-0 6 * * 0 /opt/dspace/bin/dspace checker-emailer > /dev/null
-0 1 1 * * /opt/dspace/bin/dspace cleanup > /dev/null
+#HOURLY TASKS
+0 1,8,16 * * * /home/dspace/ScheduledTasks/HourlyTasks.sh > /dev/null 2>&1
+#
+#DAILY TASKS
+0 0 * * * /home/dspace/ScheduledTasks/DailyTasks.sh > /dev/null 2>&1
 ```
 
 ## Editing Route Source 
-**Note:** For example, the installation path is /opt
+**Note:** For example, the installation path is /
 
 ### page-structure.xsl
 ```sh
-$ nano /opt/dspace-source/dspace-xmlui-mirage2/src/main/webapp/xsl/core/page-structure.xsl
+$ nano /dspace-source/dspace-xmlui-mirage2/src/main/webapp/xsl/core/page-structure.xsl
 ```
 ### item-view.xsl
 ```sh
-$ nano /opt/dspace-source/dspace-xmlui-mirage2/src/main/webapp/xsl/aspect/artifactbrowser/item-view.xsl
+$ nano /dspace-source/dspace-xmlui-mirage2/src/main/webapp/xsl/aspect/artifactbrowser/item-view.xsl
 ```
 ### languages
 >[Recommended location for i18n customizations](https://wiki.duraspace.org/display/DSDOC6x/Localization+L10n)
 ```sh
-$ mkdir /opt/dspace-source/dspace/modules/xmlui/src/main/webapp/i18n/
-$ nano /opt/dspace-source/dspace/modules/xmlui/src/main/webapp/i18n/messages_en.xml
+$ mkdir /dspace-source/dspace/modules/xmlui/src/main/webapp/i18n/
+$ nano /dspace-source/dspace/modules/xmlui/src/main/webapp/i18n/messages_en.xml
 ```
 ### static contents
 >[Repository admins and developers will also benefit because of the tools available to make both simple and advanced customizations](https://wiki.duraspace.org/display/DSDOC6x/Mirage+2+Configuration+and+Customization)
 ```sh
-$ mkdir /opt/dspace-source/dspace/modules/xmlui/src/main/webapp/static/
-$ mkdir /opt/dspace-source/dspace/modules/xmlui/src/main/webapp/static/mycontent/
-$ nano /opt/dspace-source/dspace/modules/xmlui/src/main/webapp/static/mycontent/mystyle.css
+$ mkdir /dspace-source/dspace/modules/xmlui/src/main/webapp/static/
+$ mkdir /dspace-source/dspace/modules/xmlui/src/main/webapp/static/mycontent/
+$ nano /dspace-source/dspace/modules/xmlui/src/main/webapp/static/mycontent/mystyle.css
 ```
 
 ### input-forms.xml
 ```sh
-$ nano /opt/dspace-source/dspace/config/input-forms.xml
+$ nano /dspace-source/dspace/config/input-forms.xml
 ```
 ### news-xmlui.xml
 ```sh
-$ nano /opt/dspace-source/dspace/config/news-xmlui.xml
+$ nano /dspace-source/dspace/config/news-xmlui.xml
 ```
 
 ## Rebuild DSpace
 > dspace user
 ```sh
-$ cd /opt/dspace-source
-$ mvn package -Dmirage2.on=true
-$ cd /opt/dspace-source/dspace/target/dspace-installer/
+$ cd /dspace-source
+$ mvn -U clean package -Dmirage2.on=true -Dmirage2.deps.included=false
+$ cd /dspace-source/dspace/target/dspace-installer/
 $ ant update
 ```
 > root user
@@ -100,14 +96,14 @@ $ service tomcat7 restart && service apache2 restart
 
 ## Create an initial administrator account
 ```sh
-$ /opt/dspace/bin/dspace create-administrator
+$ /dspace/bin/dspace create-administrator
 ```
 
 ## Back Up
 **Note:** For example, a dspace user
 ```sh
-$	sudo -u dspace pg_dump -U dspace -f mybackup.dump dspace -Fc
-$   tar -czvf dspace.tar.gz dspace
+$	pg_dump -U dspace -f bk_dspace.dump dspace -Fc
+$   tar -czvf dspace.tar.gz /dspace
 ```
 
 # License
