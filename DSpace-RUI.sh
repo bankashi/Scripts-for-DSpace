@@ -448,12 +448,14 @@ PM_Misc_B(){
 	chmod -R 775 $DSPACE_PATH/dspace
 	chmod -R 775 $DSPACE_PATH/dspace/var/oai/
  	chmod -R 775 $DSPACE_PATH/dspace/log/
+ 	chmod g+s $DSPACE_PATH/dspace/* 
 }
 PM_Misc_uB(){
 	source $DSCONF
 	chmod -R 775 $DSPACE_PATH/dspace
 	chmod -R 775 $DSPACE_PATH/dspace/var/oai/
  	chmod -R 775 $DSPACE_PATH/dspace/log/
+ 	chmod g+s $DSPACE_PATH/dspace/*
 }
 ########################## Module B ##########################
 PM_Tomcat(){
