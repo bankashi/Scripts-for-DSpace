@@ -13,6 +13,7 @@ Our goal is to help your IT department or future DSpace members to maintain and 
 # How do I get set up?
 First, use **dos2unix** in the script
 ```sh
+$ apt-get install dos2unix -y
 $ dos2unix DSpace-RUI.sh
 ```
 now, run the script. This script has three options (1. Replication, 2. Upgrade & 3. Install), please select the option of your preference and follow the instructions of the script
@@ -102,8 +103,8 @@ $ /dspace/bin/dspace create-administrator
 ## Back Up
 **Note:** For example, a dspace user
 ```sh
-$	pg_dump -U dspace -f bk_dspace.dump dspace -Fc
-$   tar -czvf dspace.tar.gz /dspace
+$ pg_dump -U dspace -f bk_dspace.dump dspace -Fc
+$ tar -czvf dspace.tar.gz /dspace
 ```
 
 # License

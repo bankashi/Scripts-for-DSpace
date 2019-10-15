@@ -94,7 +94,7 @@ EOF
 done
 ########################## Module A ##########################
 PM_Prerequisites(){
-	apt-get install openjdk-8-jdk tomcat7 apache2 ant maven postgresql-9.5 git ufw -y
+	apt-get install openjdk-8-jdk tomcat7 apache2 ant maven postgresql-9.5 git ufw dos2unix -y
 	ufw default deny incoming
 	ufw default allow outgoing
 	ufw allow 22
