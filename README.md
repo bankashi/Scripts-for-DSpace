@@ -46,6 +46,14 @@ $ chown -R dspace:dspace /home/dspace/ScheduledTasks/
 #
 #DAILY TASKS
 0 0 * * * /home/dspace/ScheduledTasks/DailyTasks.sh > /dev/null 2>&1
+#WEEKLY TASKS
+0 3 * * 0 /home/dspace/ScheduledTasks/WeeklyTasks.sh > /dev/null 2>&1
+#
+#MONTHLY TASKS
+0 4 1 * * /home/dspace/ScheduledTasks/MonthlytTasks.sh > /dev/null 2>&1
+#
+#YEARLY TASKS
+0 6 1 1 * /home/dspace/ScheduledTasks/YearlyTasks.sh > /dev/null 2>&1
 ```
 
 ## Editing Route Source 
