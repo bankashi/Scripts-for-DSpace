@@ -1,10 +1,6 @@
 #! /bin/bash
-#           _.====.._
-#         ,:._       ~-_
-#             `\        ~-_
-#               | _  _  |  `.
-#             ,/ /_)/ | |    ~-_
-#    -..__..-''  \_ \_\ `_      ~~--..__...----... BigWave XMAS... 
+#
+#
 #
 #Scheduled Tasks DSpaces - YEARLY TASKS
 #
